@@ -23,8 +23,6 @@ try {
 } catch (err) {
   // Fall back to environment variables (production/Vercel)
   config = {
-    SHOPIFY_STORE: process.env.SHOPIFY_STORE,
-    SHOPIFY_ACCESS_TOKEN: process.env.SHOPIFY_ACCESS_TOKEN,
     RIVO_API_KEY: process.env.RIVO_API_KEY,
     EMAIL_HOST: process.env.EMAIL_HOST,
     EMAIL_PORT: process.env.EMAIL_PORT,
@@ -49,32 +47,6 @@ if (config.EMAIL_HOST && config.EMAIL_USER && config.EMAIL_PASS) {
   });
   console.log('Email transporter configured');
 }
-
-const shopifyAPI = async (query, variables = {}) => {
-  try {
-    const response = await fetch(
-      `https://${config.SHOPIFY_STORE}/admin/api/2024-10/graphql.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': config.SHOPIFY_ACCESS_TOKEN
-        },
-        body: JSON.stringify({ query, variables })
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.errors) {
-      throw new Error(JSON.stringify(data.errors));
-    }
-
-    return data;
-  } catch (error) {
-    throw new Error(`Shopify API Error: ${error.message}`);
-  }
-};
 
 const rivoAPI = async (endpoint, method = 'GET', data = null) => {
   try {
@@ -113,13 +85,25 @@ app.get('/', (req, res) => {
     message: 'Rivo Middleware API',
     version: '1.0.0',
     endpoints: {
-      collections: 'GET /collections',
+      health: 'GET /health',
       customers: 'GET /customers',
       rewards: 'GET /rewards',
       points: 'GET /points/:email',
       redeemPoints: 'POST /redeem-points',
-      notifyRedemption: 'POST /notify-point-redemption',
-      health: 'GET /health'
+      notifyRedemption: 'POST /notify-point-redemption'
+    }
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.VERCEL ? 'production' : 'development',
+    services: {
+      rivoAPI: !!config.RIVO_API_KEY,
+      email: !!emailTransporter
     }
   });
 });
@@ -406,7 +390,6 @@ app.use((req, res) => {
     availableEndpoints: [
       'GET /',
       'GET /health',
-      'GET /collections',
       'GET /customers',
       'GET /rewards',
       'GET /points/:email',

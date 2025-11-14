@@ -1,6 +1,3 @@
-SHOPIFY_STORE=your-store.myshopify.com
-SHOPIFY_ACCESS_TOKEN=shpat_xxxxxxxxxxxxx
-
 # Rivo Merchant API Key (without "Bearer" prefix - direct key only)
 RIVO_API_KEY=your_rivo_merchant_api_key
 

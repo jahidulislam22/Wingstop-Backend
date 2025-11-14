@@ -1,42 +1,55 @@
-# API Calls Reference
+# API Reference
 
-This middleware makes the following API calls:
+This middleware provides the following endpoints and integrations:
 
-## Import Flow (import.js)
+## Available Endpoints
 
-### 1. Shopify Admin API - Create Draft Order
-```
-POST https://{store}.myshopify.com/admin/api/2024-10/graphql.json
-Header: X-Shopify-Access-Token: {token}
+### GET `/`
+Returns API information and available endpoints.
 
-GraphQL Mutation: draftOrderCreate
-```
+### GET `/health`
+Health check endpoint for monitoring.
+- Returns: service status, uptime, environment info
 
-### 2. Rivo Merchant API - Create Points Event
-```
-POST https://developer-api.rivo.io/merchant_api/v1/points_events
-Header: Authorization: {api_key}
+### GET `/customers`
+Fetches all customers from Rivo.
+- Returns: List of Rivo customers with points balances
 
-Body:
-{
-  "customer_identifier": "email@example.com",
-  "points": 100,
-  "reason": "POS Order POS001"
-}
-```
+### GET `/points/:email`
+Gets customer points balance by email.
+- Params: `email` - Customer email address
+- Returns: Customer data with points tally
 
-## Export Flow (export.js)
+### GET `/rewards`
+Fetches all available rewards from Rivo.
+- Returns: List of available rewards
 
-### Rivo Merchant API - List Customers
-```
-GET https://developer-api.rivo.io/merchant_api/v1/customers
-Header: Authorization: {api_key}
-```
+### POST `/redeem-points`
+Redeems customer points for a reward.
+- Body: `{ email, rewardId, rewardName, points, credits }`
+- Returns: Redemption details, discount code, updated balance
 
-Returns customer list with points balances for CSV export.
+### POST `/notify-point-redemption`
+Webhook endpoint for Rivo point redemption events.
+- Receives webhook from Rivo when points are redeemed
+- Sends email notification to customer with reward details
+
+## External API Integrations
+
+### Rivo Merchant API
+
+**Base URL:** `https://developer-api.rivo.io/merchant_api/v1/`
+
+**Authentication:** Direct API key in `Authorization` header (no "Bearer" prefix)
+
+**Endpoints Used:**
+- `GET /customers` - List all customers
+- `GET /customers/{email}` - Get customer by email
+- `GET /rewards` - List all rewards
+- `POST /points_redemptions` - Redeem points for rewards
 
 ## Notes
-- Rivo API uses direct API key (not Bearer token)
+- All Rivo API calls use direct API key (not Bearer token)
 - Customer identifier can be email or Shopify customer ID
-- Points events create audit trail in Rivo
+- Email notifications require SMTP configuration
 

@@ -13,8 +13,6 @@ This guide will help you deploy the Rivo Middleware backend to Vercel.
 Before deploying, you need to set up the following environment variables in your Vercel project:
 
 ```bash
-SHOPIFY_STORE=your-store.myshopify.com
-SHOPIFY_ACCESS_TOKEN=shpat_xxxxxxxxxxxxx
 RIVO_API_KEY=your_rivo_merchant_api_key
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
@@ -65,8 +63,6 @@ EMAIL_FROM_NAME=Rivo Loyalty
 
 3. **Add environment variables** (one-time setup):
    ```bash
-   vercel env add SHOPIFY_STORE
-   vercel env add SHOPIFY_ACCESS_TOKEN
    vercel env add RIVO_API_KEY
    vercel env add EMAIL_HOST
    vercel env add EMAIL_PORT
@@ -153,12 +149,6 @@ vercel --prod
 - Verify your email credentials are correct
 - For Gmail, make sure you're using an [App Password](https://support.google.com/accounts/answer/185833)
 - Check that `EMAIL_SECURE` is set to `false` for port 587
-
-### Issue: Shopify API errors
-
-**Solutions**:
-- Verify your `SHOPIFY_ACCESS_TOKEN` has the required permissions
-- Check that `SHOPIFY_STORE` is in the format: `your-store.myshopify.com`
 
 ### Viewing Logs
 

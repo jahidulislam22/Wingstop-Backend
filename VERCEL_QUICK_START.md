@@ -20,8 +20,6 @@ git push origin main
 In Vercel project settings, add these environment variables:
 
 ```
-SHOPIFY_STORE=your-store.myshopify.com
-SHOPIFY_ACCESS_TOKEN=shpat_xxxxxxxxxxxxx
 RIVO_API_KEY=your_rivo_merchant_api_key
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
