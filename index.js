@@ -400,8 +400,7 @@ app.use((req, res) => {
 });
 
 // Only start server if running directly (not imported by Vercel)
-// Vercel will import this file and use the exported app
-if (process.env.VERCEL !== '1') {
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 Rivo Middleware Server started on http://localhost:${PORT}`);
     console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
